@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js"
+import serviceRoutes from "./routes/serviceRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 8081;
@@ -18,6 +19,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
+app.use("/api/services", serviceRoutes)
 
 app.get("/", (req, res) => {
     res.status(200).json({

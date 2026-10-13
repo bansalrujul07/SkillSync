@@ -48,6 +48,12 @@ function Navbar() {
         {/* Authentication actions */}
         <div className="flex items-center gap-3">
           <Link
+            to="/services/new"
+            className="hidden rounded-lg border border-[#DCDDCF] px-4 py-2.5 text-sm font-semibold text-[#45483F] transition hover:bg-[#ECECE3] sm:inline-flex"
+          >
+            Offer a Service
+          </Link>
+          <Link
             to="/login"
             className="hidden rounded-lg px-4 py-2 text-sm font-medium text-[#45483F] transition-colors hover:bg-[#ECECE3] sm:inline-flex"
           >

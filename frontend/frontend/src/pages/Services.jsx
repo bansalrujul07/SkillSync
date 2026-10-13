@@ -1,9 +1,32 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../api/axios";
 
 function Services() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await api.get("/services");
+        setServices(response.data.services || []);
+      } catch (err) {
+        setError(
+          err.response?.data?.message ||
+            "Unable to load services. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#F7F6F0] text-[#252923]">
-      {/* Page heading */}
       <section className="border-b border-[#E7E5DC]">
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-8 md:py-20">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#727D55]">
@@ -24,103 +47,95 @@ function Services() {
         </div>
       </section>
 
-      {/* Service discovery area */}
       <section className="mx-auto max-w-7xl px-6 py-12 md:px-8 md:py-16">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">
-              Browse by interest
+              Explore available services
             </h2>
-
             <p className="mt-2 text-sm text-[#77796F]">
-              Explore different areas of expertise.
+              Discover skills offered by the SkillSync community.
             </p>
           </div>
 
-          <span className="text-sm text-[#898A80]">
-            More services coming soon
-          </span>
-        </div>
-
-        {/* Categories */}
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              number: "01",
-              title: "Design & Creativity",
-              description:
-                "Graphic design, UI/UX, illustration, and creative work.",
-              symbol: "✳",
-            },
-            {
-              number: "02",
-              title: "Technology",
-              description:
-                "Web development, programming, and technical guidance.",
-              symbol: "</>",
-            },
-            {
-              number: "03",
-              title: "Learning & Tutoring",
-              description:
-                "Learn new subjects, practice skills, and share knowledge.",
-              symbol: "Aa",
-            },
-            {
-              number: "04",
-              title: "Business & Growth",
-              description:
-                "Planning, productivity, and professional development.",
-              symbol: "↗",
-            },
-          ].map((category) => (
-            <article
-              key={category.number}
-              className="group rounded-xl border border-[#E4E3D8] bg-white/70 p-6 transition-all duration-200 hover:-translate-y-1 hover:border-[#C8CEB8] hover:bg-white hover:shadow-[0_12px_30px_rgba(37,41,35,0.05)]"
-            >
-              <div className="flex items-center justify-between">
-                <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#EEF0E7] text-sm font-semibold text-[#66734D]">
-                  {category.symbol}
-                </span>
-
-                <span className="text-xs text-[#A0A195]">
-                  {category.number}
-                </span>
-              </div>
-
-              <h3 className="mt-6 text-lg font-semibold">
-                {category.title}
-              </h3>
-
-              <p className="mt-3 text-sm leading-6 text-[#77796F]">
-                {category.description}
-              </p>
-            </article>
-          ))}
-        </div>
-
-        {/* Empty state */}
-        <div className="mt-12 rounded-xl border border-dashed border-[#D8D9CE] px-6 py-12 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#E9EBDD] text-xl text-[#66734D]">
-            ✳
-          </div>
-
-          <h2 className="mt-5 text-xl font-semibold">
-            Your next connection starts here
-          </h2>
-
-          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#77796F]">
-            We're preparing the service directory. Soon, you'll be able to
-            browse individual services and connect with their providers.
-          </p>
-
           <Link
-            to="/register"
-            className="mt-6 inline-flex rounded-lg bg-[#727D55] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5F6946]"
+            to="/services/new"
+            className="inline-flex w-fit rounded-lg bg-[#727D55] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5F6946]"
           >
-            Join SkillSync
+            Offer a Service
           </Link>
         </div>
+
+        {loading && (
+          <p className="py-16 text-center text-[#77796F]">
+            Loading services...
+          </p>
+        )}
+
+        {!loading && error && (
+          <div className="mt-8 rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && services.length > 0 && (
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service) => (
+              <article
+                key={service._id}
+                className="rounded-xl border border-[#E4E3D8] bg-white/80 p-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgba(37,41,35,0.06)]"
+              >
+                <span className="inline-flex rounded-full bg-[#EEF0E7] px-3 py-1 text-xs font-medium text-[#66734D]">
+                  {service.category}
+                </span>
+
+                <h3 className="mt-4 text-xl font-semibold">
+                  {service.title}
+                </h3>
+
+                <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[#77796F]">
+                  {service.description}
+                </p>
+
+                <div className="mt-6 border-t border-[#E7E5DC] pt-4">
+                  <p className="font-semibold">
+                    {Number(service.price) === 0
+                      ? "Free / Skill Exchange"
+                      : `₹${Number(service.price).toLocaleString("en-IN")}`}
+                  </p>
+
+                  <p className="mt-2 text-sm text-[#77796F]">
+                    Offered by {service.owner?.fullName || "SkillSync member"}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {!loading && !error && services.length === 0 && (
+          <div className="mt-12 rounded-xl border border-dashed border-[#D8D9CE] px-6 py-12 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#E9EBDD] text-xl text-[#66734D]">
+              ✳
+            </div>
+
+            <h2 className="mt-5 text-xl font-semibold">
+              Be the first to offer a service
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#77796F]">
+              There are no services available yet. Share a skill and help
+              someone in the community.
+            </p>
+
+            <Link
+              to="/services/new"
+              className="mt-6 inline-flex rounded-lg bg-[#727D55] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5F6946]"
+            >
+              Create your first listing
+            </Link>
+          </div>
+        )}
       </section>
     </main>
   );
