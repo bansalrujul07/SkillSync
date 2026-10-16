@@ -2,55 +2,86 @@ import Service from "../models/Service.js";
 
 export const createService = async (req, res) => {
     try {
-        const { title, description, category, price } = req.body;
-
-        if (
-            !title?.trim() ||
-            !description?.trim() ||
-            !category?.trim() ||
-            price === undefined ||
-            price === null ||
-            price === ""
-        ) {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide title, description, category, and price",
-            });
-        }
-
-        const numericPrice = Number(price);
-
-        if (!Number.isFinite(numericPrice) || numericPrice < 0) {
-            return res.status(400).json({
-                success: false,
-                message: "Price must be a valid non-negative number",
-            });
-        }
-
-        const service = await Service.create({
+        const {
             title,
             description,
             category,
+            price,
+            exchangeType,
+        } = req.body;
+
+        // Validate required fields
+        if (
+            !title?.trim() ||
+            !description?.trim() ||
+            !category?.trim()
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Title, description, and category are required",
+            });
+        }
+
+        // Validate service arrangement
+        if (
+            !["skill-exchange", "free", "paid"].includes(exchangeType)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please select a valid service arrangement",
+            });
+        }
+
+        // Validate price
+        const numericPrice = Number(price);
+
+        if (
+            price === undefined ||
+            price === null ||
+            price === "" ||
+            !Number.isFinite(numericPrice) ||
+            numericPrice < 0
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a valid price",
+            });
+        }
+
+        if (exchangeType === "paid" && numericPrice <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Paid services must have a price greater than zero",
+            });
+        }
+
+        if (exchangeType !== "paid" && numericPrice !== 0) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Free and skill-exchange services must have a price of zero",
+            });
+        }
+
+        // Create service
+        const service = await Service.create({
+            title: title.trim(),
+            description: description.trim(),
+            category: category.trim(),
+            exchangeType,
             price: numericPrice,
             owner: req.userId,
         });
 
-        const populatedService = await Service.findById(service._id)
-            .populate("owner", "fullName avatar");
+        // Return service with owner details
+        await service.populate("owner", "fullName avatar");
 
         return res.status(201).json({
             success: true,
             message: "Service created successfully",
-            service: populatedService,
+            service,
         });
     } catch (error) {
-        if (error.name === "ValidationError") {
-            return res.status(400).json({
-                success: false,
-                message: error.message,
-            });
-        }
-
         console.error("Create service error:", error.message);
 
         return res.status(500).json({
@@ -64,7 +95,7 @@ export const getServices = async (req, res) => {
     try {
         const { search, category } = req.query;
 
-        let filter = { status: "active" };
+        const filter = { status: "active" };
 
         if (category) {
             filter.category = {
@@ -85,17 +116,54 @@ export const getServices = async (req, res) => {
             .populate("owner", "fullName avatar")
             .sort({ createdAt: -1 });
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             count: services.length,
             services,
         });
     } catch (error) {
-        res.status(500).json({
+        console.error("Get services error:", error.message);
+
+        return res.status(500).json({
             success: false,
             message: "Failed to fetch services",
         });
     }
+};
+
+export const getServiceById = async (req, res) => {
+  try {
+    const service = await Service.findOne({
+      _id: req.params.id,
+      status: "active",
+    }).populate("owner", "fullName avatar bio");
+
+    if (!service) {
+      return res.status(404).json({
+        success: false,
+        message: "Service not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      service,
+    });
+  } catch (error) {
+    if (error.name === "CastError") {
+      return res.status(404).json({
+        success: false,
+        message: "Service not found",
+      });
+    }
+
+    console.error("Get service by ID error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to fetch service",
+    });
+  }
 };
 
 export const getMyServices = async (req, res) => {
@@ -114,7 +182,7 @@ export const getMyServices = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: "Failed to retrieve your services",
+            message: "Failed to fetch your services",
         });
     }
 };

@@ -1,3 +1,4 @@
+
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
@@ -6,7 +7,6 @@ export const registerUser = async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
 
-        // Validate required fields
         if (!fullName?.trim() || !email?.trim() || !password) {
             return res.status(400).json({
                 success: false,
@@ -30,7 +30,6 @@ export const registerUser = async (req, res) => {
 
         const normalizedEmail = email.trim().toLowerCase();
 
-        // Check whether the email is already registered
         const existingUser = await User.findOne({
             email: normalizedEmail,
         });
@@ -42,7 +41,6 @@ export const registerUser = async (req, res) => {
             });
         }
 
-        // Hash the password before storing it
         const hashedPassword = await bcrypt.hash(password, 12);
 
         const user = await User.create({
@@ -61,7 +59,6 @@ export const registerUser = async (req, res) => {
             },
         });
     } catch (error) {
-        // Handle duplicate email attempts, including concurrent requests
         if (error.code === 11000) {
             return res.status(409).json({
                 success: false,
@@ -90,7 +87,7 @@ export const loginUser = async (req, res) => {
         }
 
         if (!process.env.jwt_secret) {
-            console.error("JWT_SECRET is not configured");
+            console.error("JWT secret is not configured");
 
             return res.status(500).json({
                 success: false,
@@ -100,8 +97,6 @@ export const loginUser = async (req, res) => {
 
         const normalizedEmail = email.trim().toLowerCase();
 
-        // Password is excluded by default in the User schema,
-        // so explicitly include it for password verification.
         const user = await User.findOne({
             email: normalizedEmail,
         }).select("+password");
@@ -160,6 +155,8 @@ export const loginUser = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     try {
+        res.set("Cache-Control", "no-store");
+
         const user = await User.findById(req.userId).select(
             "fullName email bio skills avatar createdAt"
         );
@@ -181,6 +178,29 @@ export const getCurrentUser = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Failed to retrieve user details",
+        });
+    }
+};
+
+export const logout = async (req, res) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully",
+        });
+    } catch (error) {
+        console.error("Logout error:", error.message);
+
+        return res.status(500).json({
+            success: false,
+            message: "Unable to log out",
         });
     }
 };

@@ -6,16 +6,23 @@ function Services() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await api.get("/services");
+        const response = await api.get("/services", {
+          params: {
+            search: searchTerm,
+            category: selectedCategory,
+          },
+        });
         setServices(response.data.services || []);
       } catch (err) {
         setError(
           err.response?.data?.message ||
-            "Unable to load services. Please try again."
+          "Unable to load services. Please try again."
         );
       } finally {
         setLoading(false);
@@ -23,7 +30,7 @@ function Services() {
     };
 
     fetchServices();
-  }, []);
+  }, [searchTerm, selectedCategory]);
 
   return (
     <main className="min-h-screen bg-[#F7F6F0] text-[#252923]">
@@ -65,6 +72,28 @@ function Services() {
             Offer a Service
           </Link>
         </div>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="Search services..."
+            className="w-full rounded-lg border border-[#D8D9CE] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#727D55]"
+          />
+
+          <select
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
+            className="w-full rounded-lg border border-[#D8D9CE] bg-white px-4 py-3 text-sm outline-none transition focus:border-[#727D55]"
+          >
+            <option value="">All categories</option>
+            <option value="Development">  Development</option>
+            <option value="Design">Design</option>
+            <option value="Writing">Writing</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Tutoring">Tutoring</option>
+          </select>
+        </div>
 
         {loading && (
           <p className="py-16 text-center text-[#77796F]">
@@ -99,15 +128,27 @@ function Services() {
 
                 <div className="mt-6 border-t border-[#E7E5DC] pt-4">
                   <p className="font-semibold">
-                    {Number(service.price) === 0
-                      ? "Free / Skill Exchange"
-                      : `₹${Number(service.price).toLocaleString("en-IN")}`}
+                    {
+                      service.exchangeType === "skill-exchange"
+                        ? "Skill Exchange"
+                        : service.exchangeType === "free"
+                          ? "Free Service"
+                          : Number(service.price) > 0
+                            ? `₹${Number(service.price).toLocaleString("en-IN")}`
+                            : "Free / Skill Exchange"
+                    }
                   </p>
 
                   <p className="mt-2 text-sm text-[#77796F]">
                     Offered by {service.owner?.fullName || "SkillSync member"}
                   </p>
                 </div>
+                <Link
+                  to={`/services/${service._id}`}
+                  className="mt-5 inline-flex text-sm font-medium text-[#66734D] transition hover:text-[#252923]"
+                >
+                  View details →
+                </Link>
               </article>
             ))}
           </div>

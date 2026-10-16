@@ -19,10 +19,17 @@ const serviceSchema = new mongoose.Schema(
             required: [true, "Service category is required"],
             trim: true,
         },
+        exchangeType: {
+            type: String,
+            enum: ["skill-exchange", "free", "paid"],
+            required: [true, "Service arrangement is required"],
+            default: "skill-exchange",
+        },
         price: {
             type: Number,
             required: [true, "Service price is required"],
             min: [0, "Price cannot be negative"],
+            default: 0,
         },
         owner: {
             type: mongoose.Schema.Types.ObjectId,

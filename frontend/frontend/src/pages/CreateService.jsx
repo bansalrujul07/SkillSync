@@ -35,6 +35,7 @@ function CreateService() {
         title: formData.title.trim(),
         category: formData.category,
         description: formData.description.trim(),
+        exchangeType: formData.exchangeType,
         price:
           formData.exchangeType === "paid"
             ? Number(formData.price)
