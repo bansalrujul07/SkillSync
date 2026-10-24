@@ -14,7 +14,7 @@ function IncomingRequests() {
             setError("");
 
             const response = await api.get(
-                "/service-requests/incoming"
+                "/service-requests"
             );
 
             setRequests(response.data.requests || []);
