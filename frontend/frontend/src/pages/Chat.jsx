@@ -3,9 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import api from "../api/axios";
 
-const SOCKET_URL = import.meta.env.VITE_API_URL
-    ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "")
-    : "http://localhost:8081";
+const SOCKET_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:8081"
+).replace(/\/api\/?$/, "");
 
 function Chat() {
     const { requestId } = useParams();
