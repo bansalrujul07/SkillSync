@@ -134,7 +134,7 @@ function IncomingRequests() {
 
                         <Link
                             to="/services/new"
-                            className="mt-6 inline-flex rounded-xl bg-[#5F6946] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#4E5739]"
+                            className="mt-6 inline-flex rounded-xl bg-[#E2E6D5] px-5 py-3 text-sm font-semibold text-[#252923] transition hover:bg-[#D5DBC3]"
                         >
                             Offer a service
                         </Link>
@@ -233,8 +233,7 @@ function IncomingRequests() {
                                                 disabled={
                                                     updatingId === request._id
                                                 }
-                                                className="rounded-xl bg-[#5F6946] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#4E5739] disabled:opacity-60"
-                                            >
+                                                className="rounded-xl bg-[#E2E6D5] px-4 py-2.5 text-sm font-semibold text-[#252923] transition hover:bg-[#D5DBC3] disabled:opacity-60"                                            >
                                                 {updatingId === request._id
                                                     ? "Updating..."
                                                     : "Accept"}
@@ -244,8 +243,7 @@ function IncomingRequests() {
                                     {request.status === "accepted" && (
                                         <Link
                                             to={`/chat/${request._id}`}
-                                            className="inline-flex items-center justify-center rounded-xl bg-[#5F6946] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#4E5739]"
-                                        >
+                                            className="inline-flex items-center justify-center rounded-xl bg-[#E2E6D5] px-4 py-2.5 text-sm font-semibold text-[#252923] transition hover:bg-[#D5DBC3]"                                        >
                                             Open chat →
                                         </Link>
                                     )}

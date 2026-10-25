@@ -103,13 +103,6 @@ function Navbar() {
                     ) : user ? (
                         <>
                             <Link
-                                to="/services/new"
-                                className="hidden rounded-lg border border-[#DCDDCF] px-4 py-2.5 text-sm font-semibold text-[#45483F] transition hover:bg-[#ECECE3] sm:inline-flex"
-                            >
-                                Offer a Service
-                            </Link>
-
-                            <Link
                                 to="/dashboard"
                                 className="hidden text-sm text-[#77796F] hover:text-[#252923] lg:inline"
                             >
@@ -136,8 +129,7 @@ function Navbar() {
 
                             <Link
                                 to="/register"
-                                className="rounded-lg bg-[#727D55] px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-[#5F6946] hover:shadow-sm"
-                            >
+                                className="inline-flex items-center gap-2 rounded-lg bg-[#E2E6D5] px-6 py-3.5 text-sm font-semibold text-[#252923] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#D5DBC3] hover:shadow-md"                            >
                                 Get Started
                             </Link>
                         </>

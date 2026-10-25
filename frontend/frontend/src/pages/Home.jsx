@@ -32,8 +32,7 @@ function Home() {
             <div className="mt-9 flex flex-wrap items-center gap-4">
               <Link
                 to="/services"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#727D55] px-6 py-3.5 text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#5F6946] hover:shadow-md"
-              >
+                className="inline-flex items-center gap-2 rounded-lg bg-[#E2E6D5] px-6 py-3.5 text-sm font-semibold text-[#252923] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#D5DBC3] hover:shadow-md"              >
                 Explore services
                 <span aria-hidden="true">→</span>
               </Link>

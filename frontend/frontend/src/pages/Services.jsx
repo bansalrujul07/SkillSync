@@ -69,7 +69,7 @@ function Services() {
 
           <Link
             to="/services/new"
-            className="inline-flex w-fit rounded-lg bg-[#727D55] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5F6946]"
+            className="inline-flex w-fit rounded-lg bg-[#dbebc3] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5F6946]"
           >
             Offer a Service
           </Link>
