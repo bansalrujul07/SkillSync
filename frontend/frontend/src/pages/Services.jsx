@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import api from "../api/axios";
 
 function Services() {
+  const location = useLocation();
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,7 +32,7 @@ function Services() {
     };
 
     fetchServices();
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, location.key]);
 
   return (
     <main className="min-h-screen bg-[#F7F6F0] text-[#252923]">
