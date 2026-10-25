@@ -20,11 +20,23 @@ const app = express();
 const httpServer = createServer(app);
 
 const PORT = process.env.PORT || 8081;
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
+const CLIENT_URLS = [
+    "http://localhost:5173",
+    "https://skill-sync-sooty-eight.vercel.app",
+    "https://skill-sync-ps9m83v7s-bansalrujul07s-projects.vercel.app",
+    "https://skill-sync-git-main-bansalrujul07s-projects.vercel.app",
+];
 
 app.use(
     cors({
-        origin: CLIENT_URL,
+        origin: (origin, callback) => {
+            // Allow requests without an Origin header, such as server-to-server requests.
+            if (!origin || CLIENT_URLS.includes(origin)) {
+                return callback(null, true);
+            }
+
+            return callback(new Error(`CORS blocked origin: ${origin}`));
+        },
         credentials: true,
     })
 );
@@ -46,7 +58,7 @@ app.get("/", (req, res) => {
 
 const io = new Server(httpServer, {
     cors: {
-        origin: CLIENT_URL,
+        origin: CLIENT_URLS,
         credentials: true,
     },
 });
