@@ -168,15 +168,14 @@ function IncomingRequests() {
                                     </div>
 
                                     <span
-                                        className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold capitalize ${
-                                            request.status === "accepted"
-                                                ? "bg-[#E5EEDF] text-[#45613B]"
-                                                : request.status === "rejected"
-                                                    ? "bg-[#F6E8E3] text-[#99513D]"
-                                                    : request.status === "completed"
-                                                        ? "bg-[#E8EAE7] text-[#50564D]"
-                                                        : "bg-[#F3EEDC] text-[#8A7136]"
-                                        }`}
+                                        className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold capitalize ${request.status === "accepted"
+                                            ? "bg-[#E5EEDF] text-[#45613B]"
+                                            : request.status === "rejected"
+                                                ? "bg-[#F6E8E3] text-[#99513D]"
+                                                : request.status === "completed"
+                                                    ? "bg-[#E8EAE7] text-[#50564D]"
+                                                    : "bg-[#F3EEDC] text-[#8A7136]"
+                                            }`}
                                     >
                                         {request.status}
                                     </span>
@@ -241,6 +240,14 @@ function IncomingRequests() {
                                                     : "Accept"}
                                             </button>
                                         </div>
+                                    )}
+                                    {request.status === "accepted" && (
+                                        <Link
+                                            to={`/chat/${request._id}`}
+                                            className="inline-flex items-center justify-center rounded-xl bg-[#5F6946] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#4E5739]"
+                                        >
+                                            Open chat →
+                                        </Link>
                                     )}
                                 </div>
                             </article>
