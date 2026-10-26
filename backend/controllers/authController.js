@@ -182,12 +182,14 @@ export const getCurrentUser = async (req, res) => {
     }
 };
 
+
 export const logout = async (req, res) => {
     try {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            sameSite:
+                process.env.NODE_ENV === "production" ? "none" : "lax",
             path: "/",
         });
 

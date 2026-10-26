@@ -28,22 +28,24 @@ function Navbar() {
         checkAuth();
     }, [checkAuth, location.pathname]);
 
+
     const handleLogout = async () => {
         setLoggingOut(true);
 
         try {
             await api.post("/auth/logout");
-            setUser(null);
-            navigate("/", { replace: true });
         } catch (error) {
             console.error(
                 "Logout failed:",
                 error.response?.data?.message || error.message
             );
         } finally {
+            setUser(null);
             setLoggingOut(false);
+            navigate("/login", { replace: true });
         }
     };
+
 
     const navLinkClass = ({ isActive }) =>
         `text-sm transition-colors ${isActive
